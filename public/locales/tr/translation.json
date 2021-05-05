@@ -1,0 +1,15 @@
+{
+  "login": {
+    "sign_in": "Giriş Yap",
+    "sign_up": "Kaydol",
+    "username": "Kullanıcı Adı",
+    "password": "Şifre",
+    "username_missing": "Lütfen kullanıcı adınızı girin!",
+    "password_missing": "Lütfen şifrenizi girin!",
+    "submit": "Gönder"
+  },
+  "general": {
+    "or": "veya",
+    "and": "ve"
+  }
+}

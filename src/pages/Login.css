@@ -1,0 +1,22 @@
+section {
+  height: calc(100% - 64px);
+}
+
+aside {
+  background-image: url("../assets/login.svg") !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  flex: auto !important;
+  max-width: none !important;
+  min-width: none !important;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.ant-card-bordered {
+  width: auto !important;
+}
