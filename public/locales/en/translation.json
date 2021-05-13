@@ -6,7 +6,10 @@
     "password": "Password",
     "username_missing": "Please input your username!",
     "password_missing": "Please input your password!",
-    "submit": "Submit"
+    "submit": "Submit",
+    "user_not_found": "User not found!",
+    "user_exists": "User already exists!",
+    "user_created": "User created successfuly!"
   },
   "general": {
     "or": "or",

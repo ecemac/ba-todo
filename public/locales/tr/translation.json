@@ -6,7 +6,10 @@
     "password": "Şifre",
     "username_missing": "Lütfen kullanıcı adınızı girin!",
     "password_missing": "Lütfen şifrenizi girin!",
-    "submit": "Gönder"
+    "submit": "Gönder",
+    "user_not_found": "Kullanıcı bulunamadı!",
+    "user_exists": "Kullanıcı var!",
+    "user_created": "Kullanıcı başarıyla yaratıldı!"
   },
   "general": {
     "or": "veya",

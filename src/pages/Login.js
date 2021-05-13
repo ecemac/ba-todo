@@ -1,7 +1,17 @@
-import React, { useEffect } from "react";
+import React, { useState, useContext } from "react";
+import { useHistory } from "react-router";
 import { useTranslation } from "react-i18next";
-import { Layout, Typography, Divider } from "antd";
+import { Layout, Divider } from "antd";
 import { Card, Form, Input, Button } from "antd";
+import { Error } from "../components/Error";
+import { Success } from "../components/Success";
+import { CacheManager } from "../services/cache";
+import { LoginService } from "../services/LoginService";
+import {
+  AuthenticationContext,
+  AuthSetAllAction,
+} from "../context/AuthProvider";
+import config from "../config";
 import "./Login.css";
 import "../i18n";
 
@@ -17,9 +27,64 @@ const tailLayout = {
 
 export const Login = () => {
   const { t } = useTranslation();
+  const cacheMngr = new CacheManager();
+  const loginService = new LoginService();
+  const history = useHistory();
+  const authContext = useContext(AuthenticationContext);
 
-  const onFinish = (values) => {
-    console.log("Success:", values);
+  const [success, setSuccess] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
+  const [error, setError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const handleSignIn = (values) => {
+    let body = {
+      name: values.name,
+      password: values.password,
+    };
+    fetch("api/sign-in", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((data) => {
+      console.log("Sign in: ", JSON.parse(data._bodyText));
+      if (data.status === 401) {
+        setErrorMsg(t("login.user_not_found"));
+        setError(!error);
+      } else if (data.status === 200) {
+        cacheMngr.set({
+          key: config.Login.cacheKey,
+          data: JSON.parse(data._bodyText),
+        });
+
+        authContext.dispatch(
+          AuthSetAllAction({
+            authData: loginService.getAuthenticationState(),
+          })
+        );
+
+        history.push("/todo-list");
+      }
+    });
+  };
+
+  const handleSignUp = (values) => {
+    let body = {
+      name: values.name,
+      password: values.password,
+    };
+    console.log("sign up body: ", JSON.stringify(body));
+    fetch("api/sign-up", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((data) => {
+      if (data.status === 401) {
+        setErrorMsg(t("login.user_exists"));
+        setError(!error);
+      } else if (data.status === 200) {
+        setSuccessMsg(t("login.user_created"));
+        setSuccess(!success);
+      }
+    });
   };
 
   const onFinishFailed = (errorInfo) => {
@@ -36,12 +101,12 @@ export const Login = () => {
               {...layout}
               name="basic"
               initialValues={{ remember: true }}
-              onFinish={onFinish}
+              onFinish={handleSignIn}
               onFinishFailed={onFinishFailed}
             >
               <Form.Item
                 label={t("login.username")}
-                name={t("login.username")}
+                name="name"
                 rules={[
                   { required: true, message: `${t("login.username_missing")}` },
                 ]}
@@ -51,7 +116,7 @@ export const Login = () => {
 
               <Form.Item
                 label={t("login.password")}
-                name={t("login.password")}
+                name="password"
                 rules={[
                   { required: true, message: `${t("login.password_missing")}` },
                 ]}
@@ -72,12 +137,12 @@ export const Login = () => {
               {...layout}
               name="basic"
               initialValues={{ remember: true }}
-              onFinish={onFinish}
+              onFinish={handleSignUp}
               onFinishFailed={onFinishFailed}
             >
               <Form.Item
                 label={t("login.username")}
-                name={t("login.username")}
+                name="name"
                 rules={[
                   { required: true, message: `${t("login.username_missing")}` },
                 ]}
@@ -87,7 +152,7 @@ export const Login = () => {
 
               <Form.Item
                 label={t("login.password")}
-                name={t("login.password")}
+                name="password"
                 rules={[
                   { required: true, message: `${t("login.password_missing")}` },
                 ]}
@@ -103,6 +168,12 @@ export const Login = () => {
             </Form>
           </Card>
         </Content>
+        <Error open={error} close={() => setError(!error)} message={errorMsg} />
+        <Success
+          open={success}
+          close={() => setSuccess(!success)}
+          message={successMsg}
+        />
       </Layout>
     </Layout>
   );

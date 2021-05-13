@@ -6,6 +6,7 @@ export function makeServer({ environment = "test" } = {}) {
 
     models: {
       user: Model,
+      todo: Model,
     },
 
     seeds(server) {
@@ -14,48 +15,65 @@ export function makeServer({ environment = "test" } = {}) {
 
     routes() {
       this.namespace = "api";
-
-      this.get("/locales/en/translation.json");
-      this.get("/locales/tr/translation.json");
+      this.passthrough("http://localhost:3000/locales/en/translation.json");
+      this.passthrough("http://localhost:3000/locales/tr/translation.json");
 
       this.get("/users", (schema) => schema.users.all());
 
-      this.post("/sign-up", (request) => {
-        const attrs = JSON.parse(request.requestBody);
+      this.post("/sign-up", (schema, request) => {
+        let attrs = JSON.parse(request.requestBody);
         let name = attrs.name;
         let password = attrs.password;
+        let user = schema.users.findBy({ name, password });
+        if (user) {
+          let data = { errors: ["User already exists!"] };
+          return new Response(401, data);
+        }
         server.create("user", { name, password });
         return new Response(200);
       });
 
       this.post("/sign-in", (schema, request) => {
-        const attrs = JSON.parse(request.requestBody);
+        let attrs = JSON.parse(request.requestBody);
         let name = attrs.name;
         let password = attrs.password;
         let user = schema.users.findBy({ name, password });
 
         if (!user) {
-          return "User not found!";
+          let data = { errors: ["User not found!"] };
+          return new Response(401, {}, data);
         }
         var dt = new Date();
-        return {
+        let response = {
           name: user.name,
           id: user.id,
           token: `${user.name}--${user.id}--${dt.setMinutes(
             dt.getMinutes() + 30
           )}`,
         };
+        return new Response(200, {}, response);
       });
 
-      this.post("/todo", (request) => {
+      this.get("/todos", (schema, request) => {
+        const headers = JSON.parse(request.requestHeaders);
+
+        schema.todos.all();
+      });
+
+      this.post("/todos", (schema, request) => {
         const attrs = JSON.parse(request.requestBody);
-        let task = attrs.task;
-        let done = false;
-        server.create("todo", { task, done });
-        return new Response(200);
-      });
+        const headers = request.requestHeaders;
+        let token = headers.token;
+        let id = token.split("--")[1];
+        let user = schema.users.findBy({ id });
 
-      this.get("/todos", (schema) => schema.todos.all());
+        if (!user) {
+          let data = { errors: ["User not found!"] };
+          return new Response(401, {}, data);
+        }
+
+        return schema.todos.create(attrs);
+      });
     },
   });
 

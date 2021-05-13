@@ -2,13 +2,13 @@ import React, { Suspense } from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
-//import { makeServer } from "./server";
+import { makeServer } from "./server";
 import { MainRouter } from "./router/MainRouter";
 import "./i18n";
 
-/* if (process.env.NODE_ENV === "development") {
+if (process.env.NODE_ENV === "development") {
   makeServer({ environment: "development" });
-} */
+}
 
 ReactDOM.render(
   <React.StrictMode>
