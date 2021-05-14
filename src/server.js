@@ -24,7 +24,7 @@ export function makeServer({ environment = "test" } = {}) {
         let attrs = JSON.parse(request.requestBody);
         let name = attrs.name;
         let password = attrs.password;
-        let user = schema.users.findBy({ name, password });
+        let user = schema.users.findBy({ name });
         if (user) {
           let data = { errors: ["User already exists!"] };
           return new Response(401, data);
@@ -55,24 +55,64 @@ export function makeServer({ environment = "test" } = {}) {
       });
 
       this.get("/todos", (schema, request) => {
-        const headers = JSON.parse(request.requestHeaders);
-
-        schema.todos.all();
-      });
-
-      this.post("/todos", (schema, request) => {
-        const attrs = JSON.parse(request.requestBody);
         const headers = request.requestHeaders;
+
         let token = headers.token;
         let id = token.split("--")[1];
         let user = schema.users.findBy({ id });
+
+        let author_id = id;
 
         if (!user) {
           let data = { errors: ["User not found!"] };
           return new Response(401, {}, data);
         }
 
-        return schema.todos.create(attrs);
+        return schema.todos.all();
+      });
+
+      this.post("/todo", (schema, request) => {
+        const attrs = JSON.parse(request.requestBody);
+        const headers = request.requestHeaders;
+        let task = attrs.task;
+        let done = attrs.done;
+        let date = attrs.date;
+
+        let token = headers.token;
+        let id = token.split("--")[1];
+        let user = schema.users.findBy({ id });
+        let author_id = id;
+
+        if (!user) {
+          let data = { errors: ["User not found!"] };
+          return new Response(401, {}, data);
+        }
+
+        return schema.todos.create({ task, done, date, author_id });
+      });
+
+      this.patch("/todo/:id", (schema, request) => {
+        let newAttrs = JSON.parse(request.requestBody);
+        const headers = request.requestHeaders;
+
+        let task = newAttrs.task;
+        let done = newAttrs.done;
+        let date = newAttrs.date;
+
+        let token = headers.token;
+        let userId = token.split("--")[1];
+        let user = schema.users.findBy({ id: userId });
+        let author_id = userId;
+
+        let id = request.params.id;
+        let todo = schema.todos.find(id);
+
+        if (!user) {
+          let data = { errors: ["User not found!"] };
+          return new Response(401, {}, data);
+        }
+
+        return todo.update({ task, date, done, author_id });
       });
     },
   });

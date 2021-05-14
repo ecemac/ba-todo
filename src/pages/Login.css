@@ -1,8 +1,4 @@
-section {
-  height: calc(100% - 64px);
-}
-
-aside {
+aside.login-sider {
   background-image: url("../assets/login.svg") !important;
   background-position: center !important;
   background-repeat: no-repeat !important;
@@ -11,7 +7,7 @@ aside {
   min-width: none !important;
 }
 
-main {
+main.login-main {
   display: flex;
   flex-direction: column;
   justify-content: center;

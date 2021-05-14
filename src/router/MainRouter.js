@@ -5,6 +5,8 @@ import { AuthRoute } from "./AuthRoute";
 import { Headers } from "../components/Headers";
 import { Login } from "../pages/Login";
 import { TodoList } from "../pages/TodoList";
+import { TodoCalendar } from "../pages/TodoCalendar";
+import "../App.css";
 
 export const MainRouter = () => {
   return (
@@ -14,6 +16,7 @@ export const MainRouter = () => {
         <Switch>
           <Route exact path="/" component={Login} />
           <AuthRoute exact path="/todo-list" component={TodoList} />
+          <AuthRoute exact path="/todo-calendar" component={TodoCalendar} />
         </Switch>
       </Router>
     </AuthProvider>

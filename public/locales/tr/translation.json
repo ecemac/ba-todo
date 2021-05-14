@@ -9,10 +9,27 @@
     "submit": "Gönder",
     "user_not_found": "Kullanıcı bulunamadı!",
     "user_exists": "Kullanıcı var!",
-    "user_created": "Kullanıcı başarıyla yaratıldı!"
+    "user_created": "Kullanıcı başarıyla yaratıldı!",
+    "logout": "Çıkış"
+  },
+  "todo_list": {
+    "add_todo": "Görev Ekle",
+    "edit_todo": "Görev Düzenle",
+    "task": "Görev",
+    "date": "Tarih",
+    "edit": "Düzenle",
+    "complete": "Tamamla",
+    "done": "Tamamlandı",
+    "task_missing": "Görev girin",
+    "date_missing": "Tarih seçin"
   },
   "general": {
     "or": "veya",
-    "and": "ve"
+    "and": "ve",
+    "error": "Hata!",
+    "success": "Başarılı!",
+    "done": "Tamam",
+    "todo_list": "Görev Listesi",
+    "todo_calendar": "Görev Takvimi"
   }
 }

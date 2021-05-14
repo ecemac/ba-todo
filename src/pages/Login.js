@@ -46,7 +46,6 @@ export const Login = () => {
       method: "POST",
       body: JSON.stringify(body),
     }).then((data) => {
-      console.log("Sign in: ", JSON.parse(data._bodyText));
       if (data.status === 401) {
         setErrorMsg(t("login.user_not_found"));
         setError(!error);
@@ -72,7 +71,6 @@ export const Login = () => {
       name: values.name,
       password: values.password,
     };
-    console.log("sign up body: ", JSON.stringify(body));
     fetch("api/sign-up", {
       method: "POST",
       body: JSON.stringify(body),
@@ -87,22 +85,17 @@ export const Login = () => {
     });
   };
 
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
-  };
-
   return (
     <Layout>
       <Layout>
-        <Sider></Sider>
-        <Content>
+        <Sider className="login-sider"></Sider>
+        <Content className="login-main">
           <Card title={t("login.sign_in")} style={{ width: 300 }}>
             <Form
               {...layout}
               name="basic"
               initialValues={{ remember: true }}
               onFinish={handleSignIn}
-              onFinishFailed={onFinishFailed}
             >
               <Form.Item
                 label={t("login.username")}
@@ -138,7 +131,6 @@ export const Login = () => {
               name="basic"
               initialValues={{ remember: true }}
               onFinish={handleSignUp}
-              onFinishFailed={onFinishFailed}
             >
               <Form.Item
                 label={t("login.username")}
